@@ -19,6 +19,13 @@
 #include <iostream>
 #include <sstream>
 
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <arpa/inet.h>
+#include <strings.h>
+
 #define _BEGIN(ns) namespace ns {
 #define _END(ns) }
 
@@ -26,9 +33,17 @@
 #define NS_YAN _BEGIN(MY_NAMESPACE)
 #define NS_END _END()
 
-_BEGIN(cfg)
+#define syscall_error_handler(msg) do { \
+	LOG_ERROR << "SYSTEM CALL"; \
+	perror(msg); \
+	exit(EXIT_FAILURE); \
+} while (0)
+
+
+_BEGIN(cfg) /* configuration of global variables */
 
 static constexpr size_t THREAD_POOL_DEFAULT_SIZE = 2;
+static constexpr int PENDING_CONN_QUEUE_SIZE = 10;
 
 _END(cfg) /* end of namespace cfg */
 

@@ -33,19 +33,9 @@ void ThreadPool::stop_this_thread() {
     return ;
 }
 
-/*
-template< typename FUNCTION_T, typename ...ARGS >
-void ThreadPool::enqueue_task(FUNCTION_T func, ARGS ...args) {
-    std::unique_lock<std::mutex> lock(_mutex);
-    _task_queue.push(std::make_shared<Task>(func, std::forward<ARGS>(args)...));
-    _cond.notify_one();
-    return ;
-}
-*/
-
 void ThreadPool::start() {
     if (_running == true) return ;
-    for (int i = 0; i < _thread_num; ++i) {
+    for (auto i = 0u; i < _thread_num; ++i) {
         _threads[i] = std::make_unique<std::thread>(&ThreadPool::work_this_thread, this);
     }
     _running = true;
@@ -54,13 +44,13 @@ void ThreadPool::start() {
 
 void ThreadPool::stop() {
     if (_running == false) return ;
-    for (int i = 0; i < _thread_num; ++i)
+    for (auto i = 0u; i < _thread_num; ++i)
         enqueue_task(&ThreadPool::stop_this_thread, this);
 
-    for (int i = 0; i < _thread_num; ++i)
+    for (auto i = 0u; i < _thread_num; ++i)
         _threads[i]->join();
 
-    for (int i = 0; i < _thread_num; ++i)
+    for (auto i = 0u; i < _thread_num; ++i)
         _threads[i].reset();
     _running = false;
     return ;
